@@ -2,7 +2,9 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const app = express();
+require("dotenv").config();
 const PORT = 3000;
 app.use(express.json());
 const User = require("./models/User");
@@ -17,6 +19,10 @@ app.get("/", (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(409).send("Email already exists");
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({ name, email, password: hashedPassword });
   await user.save();
@@ -35,7 +41,13 @@ app.post("/login", async (req, res) => {
   if (!isMatch) {
     return res.status(401).send("incorrect password");
   }
-  return res.send("user logged in");
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+  return res.json({
+    message: "Login successful",
+    token,
+  });
 });
 
 app.listen(PORT, () => console.log(`server running on ${PORT}`));
