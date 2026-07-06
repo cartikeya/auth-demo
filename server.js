@@ -8,13 +8,23 @@ require("dotenv").config();
 const PORT = 3000;
 app.use(express.json());
 const User = require("./models/User");
+const authMiddleware = require("./middleware/authMiddleware");
 mongoose
-  .connect("mongodb://localhost:27017/auth-demo")
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
   res.send("hello");
+});
+app.get("/login", (req, res) => {
+  res.send("login page");
+  console.log();
+});
+
+app.get("/profile", authMiddleware, async (req, res) => {
+  const userProfile = await User.findById(req.user.userId);
+  res.send({ userProfile });
 });
 
 app.post("/register", async (req, res) => {
