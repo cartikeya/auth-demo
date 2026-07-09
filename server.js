@@ -25,8 +25,6 @@ app.get("/login", (req, res) => {
   console.log();
 });
 
-app.get("/profile", authMiddleware, async (req, res) => {
-  
-});
+// app.get("/profile", authMiddleware, async (req, res) => {});
 
 app.listen(PORT, () => console.log(`server running on ${PORT}`));

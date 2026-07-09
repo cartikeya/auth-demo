@@ -4,7 +4,7 @@ const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).send("authheader not found");
+    return res.status(401).send("authheader not found");c
   }
   const token = authHeader.split(" ")[1];
   try {
@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
     console.log(decoded);
     next();
   } catch (error) {
-    return res.status(401).send("Invaalid token");
+    return res.status(401).send("Invalid token");
   }
 };
 
